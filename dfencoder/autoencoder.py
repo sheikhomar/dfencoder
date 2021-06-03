@@ -219,7 +219,7 @@ class AutoEncoder(torch.nn.Module):
 
     def init_cats(self, df):
         dt = df.dtypes
-        objects = list(dt[dt==pd.Categorical].index)
+        objects = list(dt[dt=="category"].index)
         for ft in objects:
             feature = {}
             vl = df[ft].value_counts()
