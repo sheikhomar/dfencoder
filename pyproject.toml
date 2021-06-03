@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "dfencoder"
+version = "0.0.35"
+description = "AutoEncoders for DataFrames"
+authors = ["Michael Klear <michael.r.klear@gmail.com>"]
+license = "New BSD License"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+torch = "^1.8.1"
+tqdm = "^4.61.0"
+scikit-learn = "^0.24.2"
+tensorboardX = "^2.2"
+matplotlib = "^3.4.2"
+
+[tool.poetry.dev-dependencies]
+jupyterlab = "^3.0.16"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
