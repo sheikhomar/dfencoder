@@ -117,7 +117,7 @@ class AutoEncoder(torch.nn.Module):
             nesterov=False,
             verbose=False,
             device=None,
-            logger='basic',
+            logger_name='basic',
             logdir='logdir/',
             project_embeddings=True,
             run=None,
@@ -176,7 +176,8 @@ class AutoEncoder(torch.nn.Module):
         else:
             self.device = device
 
-        self.logger = logger
+        self.logger = None
+        self.logger_name = logger_name
         self.logdir = logdir
         self.run = run
         self.project_embeddings = project_embeddings
@@ -402,11 +403,11 @@ class AutoEncoder(torch.nn.Module):
 
         cat_names = list(self.categorical_fts.keys())
         fts = self.num_names + self.bin_names + cat_names
-        if self.logger == 'basic':
+        if self.logger_name == 'basic':
             self.logger = BasicLogger(fts=fts)
-        elif self.logger == 'ipynb':
+        elif self.logger_name == 'ipynb':
             self.logger = IpynbLogger(fts=fts)
-        elif self.logger == 'tensorboard':
+        elif self.logger_name == 'tensorboard':
             self.logger = TensorboardXLogger(logdir=self.logdir, run=self.run, fts=fts)
         #returns a copy of preprocessed dataframe.
         self.to(self.device)
@@ -612,7 +613,7 @@ class AutoEncoder(torch.nn.Module):
                         id_loss.append(net_loss)
 
                     self.logger.end_epoch()
-                    if self.project_embeddings:
+                    if self.project_embeddings and self.logger_name == 'tensorboard':
                         self.logger.show_embeddings(self.categorical_fts)
                     if self.verbose:
                         swapped_loss = np.array(swapped_loss).mean()
