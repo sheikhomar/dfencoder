@@ -264,7 +264,7 @@ class AutoEncoder(torch.nn.Module):
             embed_dim = compute_embedding_size(n_cats)
             embed_layer = torch.nn.Embedding(n_cats, embed_dim)
             feature['embedding'] = embed_layer
-            self.add_module(f'{ft} embedding', embed_layer)
+            self.add_module(f'{ft.replace(".","_")} embedding', embed_layer)
             #track embedding inputs
             input_dim += embed_dim
 
@@ -283,7 +283,7 @@ class AutoEncoder(torch.nn.Module):
             cats = feature['cats']
             layer = torch.nn.Linear(dim, len(cats)+1)
             feature['output_layer'] = layer
-            self.add_module(f'{ft} output', layer)
+            self.add_module(f'{ft.replace(".","_")} output', layer)
 
     def prepare_df(self, df):
         """
