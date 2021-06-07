@@ -13,6 +13,7 @@ scikit-learn = "^0.24.2"
 tensorboardX = "^2.2"
 matplotlib = "^3.4.2"
 pandas = "^1.2.4"
+openpyxl = "^3.0.7"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.0.16"
