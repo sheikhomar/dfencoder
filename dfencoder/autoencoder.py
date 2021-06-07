@@ -487,6 +487,8 @@ class AutoEncoder(torch.nn.Module):
         mse_loss = self.mse(num, num_target)
         net_loss += list(mse_loss.mean(dim=0).cpu().detach().numpy())
         mse_loss = mse_loss.mean()
+        if self.verbose:
+            print(f'Bin min={torch.min(bin):0.5} max={torch.max(bin):0.5}  --  Bin Target: {torch.min(bin_target):0.5} max={torch.max(bin_target):0.5}')
         bce_loss = self.bce(bin, bin_target)
         net_loss += list(bce_loss.mean(dim=0).cpu().detach().numpy())
         bce_loss = bce_loss.mean()
@@ -644,10 +646,15 @@ class AutoEncoder(torch.nn.Module):
             in_sample = input_df.iloc[start:stop]
             target_sample = df.iloc[start:stop]
             num, bin, cat = self.forward(in_sample)
-            mse, bce, cce, net_loss = self.compute_loss(
-                num, bin, cat, target_sample,
-                logging=True
-            )
+            mse, bce, cce, net_loss = None, None, None, None
+            try:
+                mse, bce, cce, net_loss = self.compute_loss(
+                    num, bin, cat, target_sample,
+                    logging=True
+                )
+            except:
+                if self.verbose:
+                    print('Foo bar!')
             self.do_backward(mse, bce, cce)
             self.optim.step()
             self.optim.zero_grad()
