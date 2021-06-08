@@ -138,7 +138,7 @@ def main():
     df_train, df_test = split_train_test(df_cleaned_data)
 
     model = dfencoder.AutoEncoder(
-        encoder_layers = [512, 512, 512], #model architecture
+        encoder_layers = [512], #model architecture
         decoder_layers = [], #decoder optional - you can create bottlenecks if you like
         activation='relu',
         swap_p=0.2, #noise parameter
