@@ -185,6 +185,7 @@ class AutoEncoder(torch.nn.Module):
         self.scaler = scaler
 
         self.n_megabatches = n_megabatches
+        self.loss_tracker = dict()
 
     def get_scaler(self, name):
         scalers = {
@@ -487,18 +488,27 @@ class AutoEncoder(torch.nn.Module):
         mse_loss = self.mse(num, num_target)
         net_loss += list(mse_loss.mean(dim=0).cpu().detach().numpy())
         mse_loss = mse_loss.mean()
-        if self.verbose:
-            print(f'Bin min={torch.min(bin):0.5} max={torch.max(bin):0.5}  --  Bin Target: {torch.min(bin_target):0.5} max={torch.max(bin_target):0.5}')
+        if 'mse' not in self.loss_tracker:  # TODO: Remove this
+            self.loss_tracker['mse'] = []   # TODO: Remove this
+        self.loss_tracker['mse'].append(net_loss[-1])  # TODO: Remove this
+        # if self.verbose:
+        #    print(f'Bin min={torch.min(bin):0.5} max={torch.max(bin):0.5}  --  Bin Target: {torch.min(bin_target):0.5} max={torch.max(bin_target):0.5}')
         bce_loss = self.bce(bin, bin_target)
         net_loss += list(bce_loss.mean(dim=0).cpu().detach().numpy())
         bce_loss = bce_loss.mean()
+        if 'bce' not in self.loss_tracker:  # TODO: Remove this
+            self.loss_tracker['bce'] = []   # TODO: Remove this
+        self.loss_tracker['bce'].append(net_loss[-1])  # TODO: Remove this
         cce_loss = []
         for i, ft in enumerate(self.categorical_fts):
+            if f'cat_{ft}' not in self.loss_tracker:   # TODO: Remove this
+                self.loss_tracker[f'cat_{ft}'] = []    # TODO: Remove this
             loss = self.cce(cat[i], codes[i])
             loss = loss.mean()
             cce_loss.append(loss)
             val = loss.cpu().item()
             net_loss += [val]
+            self.loss_tracker[f'cat_{ft}'].append(val)  # TODO: Remove this
         if logging:
             if self.training:
                 self.logger.training_step(net_loss)
@@ -508,6 +518,7 @@ class AutoEncoder(torch.nn.Module):
                 self.logger.val_step(net_loss)
 
         net_loss = np.array(net_loss).mean()
+        pd.DataFrame(self.loss_tracker).transpose().to_excel('losses.xlsx')  # TODO: Remove this
         return mse_loss, bce_loss, cce_loss, net_loss
 
     def do_backward(self, mse, bce, cce):
