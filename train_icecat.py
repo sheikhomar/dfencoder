@@ -145,7 +145,7 @@ def main():
         lr = 0.01,
         lr_decay=.99,
         batch_size=512,
-        logger_name='ipynb', #special logging for jupyter notebooks
+        logger_name='tensorboard', #special logging for jupyter notebooks
         verbose=True,
         optimizer='sgd',
         scaler='gauss_rank', #gauss rank scaling forces your numeric features into standard normal distributions
